@@ -1,18 +1,23 @@
 package com.kevin.spring_library_api.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@NoArgsConstructor
 @Getter
-@Setter
 @Entity
-@Table(name = "Book")
+@Table(name = "books")
 public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, length = 100)
     private String title;
@@ -23,38 +28,77 @@ public class Book {
     @Column(nullable = false, length = 100)
     private String publisher;
 
-    @Column(nullable = false)
-    private double price;
+    @Column(nullable = false, precision = 8, scale = 2)
+    private BigDecimal price;
 
     @Column(nullable = false)
     private int publicationYear;
 
     @Column(nullable = false)
-    private String genre;
-
-    @Column(nullable = false)
-    private String idiom;
-
-    @Column(nullable = false)
     private int numberOfPages;
 
-    @Column(unique = true, length = 13)
-    private long isbn;
+    @Column(nullable = false, unique = true, length = 17)
+    private String isbn;
 
-    public Book() {}
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Language language;
 
-    public Book(long id, String title, String author, String publisher, double price, int publicationYear, String genre, String idiom, int numberOfPages, long isbn) {
-        this.id = id;
+    @ElementCollection
+    @CollectionTable(
+            name = "book_genres",
+            joinColumns = @JoinColumn(name = "book_id")
+    )
+    @Enumerated(EnumType.STRING)
+    @Column(name = "genre", nullable = false)
+    private Set<Genre> genres = new HashSet<>();
+
+    public Book(String title, String author, String publisher, BigDecimal price, int publicationYear, Set<Genre> genres, Language language, int numberOfPages, String isbn) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.price = price;
         this.publicationYear = publicationYear;
-        this.genre = genre;
-        this.idiom = idiom;
+        this.genres = genres;
+        this.language = language;
         this.numberOfPages = numberOfPages;
         this.isbn = isbn;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public void setPublicationYear(int publicationYear) {
+        this.publicationYear = publicationYear;
+    }
+
+    public void setGenres(Set<Genre> genres) {
+        this.genres = genres == null ? new HashSet<>() : new HashSet<>(genres);
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public void setNumberOfPages(int numberOfPages) {
+        this.numberOfPages = numberOfPages;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
 
 }
