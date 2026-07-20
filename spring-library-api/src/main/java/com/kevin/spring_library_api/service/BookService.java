@@ -2,6 +2,9 @@ package com.kevin.spring_library_api.service;
 
 import com.kevin.spring_library_api.dto.BookRequestDTO;
 import com.kevin.spring_library_api.dto.BookResponseDTO;
+import com.kevin.spring_library_api.exception.BookNotFoundException;
+import com.kevin.spring_library_api.exception.IsbnDuplicateException;
+import com.kevin.spring_library_api.exception.IsbnNotFoundException;
 import com.kevin.spring_library_api.model.Book;
 import com.kevin.spring_library_api.model.Genre;
 import com.kevin.spring_library_api.model.Language;
@@ -12,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BookService {
@@ -22,13 +26,35 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
+    @Transactional
     public BookResponseDTO create (BookRequestDTO dto) {
+
+        if (bookRepository.findByIsbn(dto.isbn()).isPresent()) {
+            throw new IsbnDuplicateException(dto.isbn());
+        }
+
         Book book = new Book();
         applyDtoToBook(dto, book);
 
         return toDTO(bookRepository.save(book));
     }
 
+    @Transactional(readOnly = true)
+    public List<BookResponseDTO> findAll() {
+        return bookRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public BookResponseDTO findById(Long id) {
+        return bookRepository.findById(id)
+                .map(this::toDTO)
+                .orElseThrow(() -> new BookNotFoundException(id));
+    }
+
+    @Transactional(readOnly = true)
     public List<BookResponseDTO> findByTitle(String title) {
         return bookRepository.findByTitle(title)
                 .stream()
@@ -36,6 +62,7 @@ public class BookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<BookResponseDTO> findByAuthor(String author) {
         return bookRepository.findByAuthor(author)
                 .stream()
@@ -43,6 +70,7 @@ public class BookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<BookResponseDTO> findByPublisher(String publisher) {
         return bookRepository.findByPublisher(publisher)
                 .stream()
@@ -50,6 +78,7 @@ public class BookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<BookResponseDTO> findByGenres(Set<Genre> genres) {
         return bookRepository.findByAllGenres(genres, genres.size())
                 .stream()
@@ -57,6 +86,7 @@ public class BookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<BookResponseDTO> findByLanguage(Language language) {
         return bookRepository.findByLanguage(language)
                 .stream()
@@ -64,12 +94,14 @@ public class BookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public BookResponseDTO findByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn)
                 .map(this::toDTO)
-                .orElseThrow(() -> new RuntimeException("Book not found with ISBN: " + isbn));
+                .orElseThrow(() -> new IsbnNotFoundException(isbn));
     }
 
+    @Transactional(readOnly = true)
     public List<BookResponseDTO> findByPriceLessThan(BigDecimal price) {
         return bookRepository.findByPriceLessThan(price)
                 .stream()
@@ -77,6 +109,7 @@ public class BookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<BookResponseDTO> findByPublicationYear(int publicationYear) {
         return bookRepository.findByPublicationYear(publicationYear)
                 .stream()
@@ -84,16 +117,29 @@ public class BookService {
                 .toList();
     }
 
+    @Transactional
     public BookResponseDTO update(Long id, BookRequestDTO dto) {
+
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+                .orElseThrow(() -> new BookNotFoundException(id));
+
+        bookRepository.findByIsbn(dto.isbn())
+                .filter(foundBook -> !foundBook.getId().equals(id))
+                .ifPresent(foundBook -> {
+                    throw new IsbnDuplicateException(dto.isbn());
+                });
 
         applyDtoToBook(dto, book);
-
         return toDTO(bookRepository.save(book));
     }
 
+    @Transactional
     public void deleteById(Long id) {
+
+        if (bookRepository.findById(id).isEmpty()) {
+            throw new BookNotFoundException(id);
+        }
+
         bookRepository.deleteById(id);
     }
 

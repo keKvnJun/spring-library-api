@@ -1,4 +1,5 @@
 package com.kevin.spring_library_api.repository;
+
 import com.kevin.spring_library_api.model.Book;
 import com.kevin.spring_library_api.model.Genre;
 import com.kevin.spring_library_api.model.Language;
@@ -13,10 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long>{
-
-    List<Book> findAll();
-
-    Optional<Book> findById(Long id);
 
     List<Book> findByTitle(String title);
 
