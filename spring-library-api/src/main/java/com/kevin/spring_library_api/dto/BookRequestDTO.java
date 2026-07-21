@@ -9,23 +9,53 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Min;
 import com.kevin.spring_library_api.model.Language;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import com.kevin.spring_library_api.model.Genre;
 
 public record BookRequestDTO(
-        @NotBlank String title,
-        @NotBlank String author,
-        @NotBlank String publisher,
-        @NotNull @Positive BigDecimal price,
-        @NotNull @Positive Integer publicationYear,
-        @NotNull @Min(1) Integer numberOfPages,
+
+        @NotBlank
+        @Schema(description = "Title of the book", example = "Bible")
+        String title,
+
+        @NotBlank
+        @Schema(description = "Author of the book", example = "C. S. Lewis")
+        String author,
+
+        @NotBlank
+        @Schema(description = "Publisher of the book", example = "HarperCollins")
+        String publisher,
+
+        @NotNull
+        @Positive
+        @Schema(description = "Price of the book", example = "19.99")
+        BigDecimal price,
+
+        @NotNull
+        @Positive
+        @Schema(description = "Publication year of the book", example = "2023")
+        Integer publicationYear,
+
+        @NotNull
+        @Min(1)
+        @Schema(description = "Number of pages in the book", example = "350")
+        Integer numberOfPages,
 
         @NotBlank
         @Pattern(
                 regexp = "^97[89]\\d{10}$",
                 message = "ISBN must contain 13 digits and start with 978 or 979"
         )
+        @Schema(description = "ISBN of the book", example = "9780061992889")
         String isbn,
 
-        @NotNull Language language,
-        @NotEmpty Set<Genre> genres
+        @NotNull
+        @Schema(description = "Language of the book", example = "ENGLISH")
+        Language language,
+
+        @NotEmpty
+        @Schema(description = "Genres of the book", example = "[\"FICTION\", \"FANTASY\"]")
+        Set<@NotNull Genre> genres
 ) {}
