@@ -11,5 +11,6 @@ public enum Genre {
     ROMANCE,
     THRILLER,
     SELF_HELP,
-    POETRY
+    POETRY,
+    CHRISTIAN_LITERATURE,
 }
