@@ -80,6 +80,11 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public List<BookResponseDTO> findByGenres(Set<Genre> genres) {
+
+        if (genres == null || genres.isEmpty()) {
+            return findAll();
+        }
+
         return bookRepository.findByAllGenres(genres, genres.size())
                 .stream()
                 .map(this::toDTO)
