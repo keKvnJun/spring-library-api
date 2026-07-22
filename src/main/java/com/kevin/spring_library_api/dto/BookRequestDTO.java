@@ -17,7 +17,7 @@ import com.kevin.spring_library_api.model.Genre;
 public record BookRequestDTO(
 
         @NotBlank
-        @Schema(description = "Title of the book", example = "Bible")
+        @Schema(description = "Title of the book", example = "The Chronicles of Narnia")
         String title,
 
         @NotBlank
@@ -30,17 +30,17 @@ public record BookRequestDTO(
 
         @NotNull
         @Positive
-        @Schema(description = "Price of the book", example = "19.99")
+        @Schema(description = "Price of the book", example = "39.99")
         BigDecimal price,
 
         @NotNull
         @Positive
-        @Schema(description = "Publication year of the book", example = "2023")
+        @Schema(description = "Publication year of the book", example = "2001")
         Integer publicationYear,
 
         @NotNull
         @Min(1)
-        @Schema(description = "Number of pages in the book", example = "350")
+        @Schema(description = "Number of pages in the book", example = "767")
         Integer numberOfPages,
 
         @NotBlank
@@ -48,7 +48,7 @@ public record BookRequestDTO(
                 regexp = "^97[89]\\d{10}$",
                 message = "ISBN must contain 13 digits and start with 978 or 979"
         )
-        @Schema(description = "ISBN of the book", example = "9780061992889")
+        @Schema(description = "ISBN of the book", example = "9780066238500")
         String isbn,
 
         @NotNull
@@ -56,6 +56,6 @@ public record BookRequestDTO(
         Language language,
 
         @NotEmpty
-        @Schema(description = "Genres of the book", example = "[\"FICTION\", \"FANTASY\"]")
+        @Schema(description = "Genres of the book", example = "[\"FICTION\", \"CHRISTIAN_LITERATURE\"]")
         Set<@NotNull Genre> genres
 ) {}
