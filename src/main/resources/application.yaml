@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+
+  config:
+    import: optional:file:.env[.properties]
+
+  application:
+    name: spring-library-api
+
+  jpa:
+    # Exibe no console as queries SQL geradas pelo Hibernate
+    show-sql: true
+
+    # Ele atualiza automaticamente o schema do banco de dados com base nas entidades mapeadas
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8080
+
