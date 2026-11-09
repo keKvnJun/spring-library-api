@@ -11,12 +11,12 @@ spring:
     name: spring-library-api
 
   jpa:
-    # Exibe no console as queries SQL geradas pelo Hibernate
+    # Show generated SQL queries in the console.
     show-sql: true
 
-    # Ele atualiza automaticamente o schema do banco de dados com base nas entidades mapeadas
+    # Update the database schema based on mapped entities.
     hibernate:
       ddl-auto: update
-server:
-  port: 8080
 
+server:
+  port: ${PORT:8080}
